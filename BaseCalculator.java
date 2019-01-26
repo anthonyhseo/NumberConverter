@@ -1,3 +1,15 @@
+/*
+ * BaseCalculator.java
+ * 
+ * DESCRIPTION: This is the main gui program for the number converter.
+ * 
+ * To compile: Ensure both BaseCalculator.java and BaseConverter.java in the same directory. Then run 'javac *.java' from the command line. 
+ * To run: After compiling, run 'java BaseCalculator' from the command line. 
+ * 
+ * AUTHOR: Anthony Seo
+ */
+
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -50,6 +62,11 @@ public class BaseCalculator {
     public BaseCalculator() {
         init();
 
+        /*
+         * DESCRIPTION: This is the choose color action listener. When clicked,
+         * the gui will open the JcolorChooser and the user will select a color.
+         * Once selected and closed, the program will convert to different bases. 
+         */
         chooseColorBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -66,7 +83,11 @@ public class BaseCalculator {
                 floatText.setText("" + BaseConverter.colorToFloat(newColor));
             }
         });
-        
+        /*
+         * DESCRIPTION: Allows the gui to update the textfield values with 
+         * the respective base values. It converts based on the last edited
+         * text field. 
+         */
         convertBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -122,6 +143,10 @@ public class BaseCalculator {
             }
         });
 
+        /*
+         * DESCRIPTION: Enables clear function. When the clear button is pressed,
+         * all the text fields are reset. 
+         */
         clearBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -137,6 +162,11 @@ public class BaseCalculator {
             }
         });
 
+        /*
+         * DESCRIPTION: The next 6 listeners will detect if the text
+         * within each respective textbox have been edited. The flags are 
+         * set for the convert button to use. 
+         */
 
         decimalText.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
@@ -182,6 +212,9 @@ public class BaseCalculator {
  
     }
 
+    /*
+     * DESCRIPTION: This initializes the gui variables. 
+     */
     private void init() {
         frm = new JFrame("Number Converter");
         frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -276,6 +309,9 @@ public class BaseCalculator {
         resetTextChangedStatus();
     }
 
+    /*
+     * DESCRIPTION: This resets all the textfield changed flags.
+     */
     public void resetTextChangedStatus() {
         decimalChanged = false;
         binaryChanged = false;

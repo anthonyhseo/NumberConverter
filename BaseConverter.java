@@ -1,8 +1,21 @@
+/*
+ * BaseConverter.java
+ * 
+ * DESCRIPTION: This is the class that allows the user to convert between different
+ * number bases. 
+ * 
+ * 
+ * AUTHOR: Anthony Seo
+ */
+
 import java.awt.Color;
 
 public class BaseConverter {
     private BaseConverter() {}
 
+    /*
+     * DESCRIPTION: Given a hex digit 0-9A-F, it will convert it to an integer value.
+     */
     private static int hexCharToInt(char hexChar) {
         if (hexChar >= '0' && hexChar <= '9') {
             return hexChar - '0';
@@ -23,6 +36,9 @@ public class BaseConverter {
         return -1; // Invalid option
     }
     
+    /*
+     * DESCRIPTION: Given a given an integer 0-15, it will return a hex digit.
+     */
     private static char intToHexDigit(int num) {
         if (num >= 0 && num < 10) {
             return (char) (num + 48);
@@ -43,6 +59,10 @@ public class BaseConverter {
         return '$'; // Invalid option. 
     }
 
+    /*
+     * DESCRIPTION: Adds zeros to strings if not enough characters are present.
+     * Example: 2 = 10 in binary. After padding: 000.....0010.
+     */
     private static String padZeros(String input, int size) {
         while (input.length() < size) {
             input = "0" + input;
@@ -333,7 +353,6 @@ public class BaseConverter {
     }
 
     public static String floatToBinary(float floatInput) {
-
         // Take care of the edge cases in this if block
         if (floatInput == 0) {
             return "00000000000000000000000000000000";
@@ -354,6 +373,8 @@ public class BaseConverter {
             sign = 0;
         }
 
+        // divide or multiply by two and keep track of the number of times
+        // divided or multiplied for the exponent. 
         int powerCount = 0;
         if (floatInput > 2) {
             while (floatInput >= 2) {
@@ -418,6 +439,7 @@ public class BaseConverter {
         return binaryToColor(floatBinary);
     }
 
+    // Main function is used to test the methods in this class. 
     public static void main(String[] args) {
         System.out.println("Testing int methods. Number chosen = 1784772193");
         System.out.println(intToBinary(1784772193));
