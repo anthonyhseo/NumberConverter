@@ -4,26 +4,8 @@ public class BaseConverter {
     private BaseConverter() {}
 
     private static int hexCharToInt(char hexChar) {
-        if (hexChar == '0') {
-            return 0;
-        } else if (hexChar == '1') {
-            return 1;
-        } else if (hexChar == '2') {
-            return 2;
-        } else if (hexChar == '3') {
-            return 3;
-        } else if (hexChar == '4') {
-            return 4;
-        } else if (hexChar == '5') {
-            return 5;
-        } else if (hexChar == '6') {
-            return 6;
-        } else if (hexChar == '7') {
-            return 7;
-        } else if (hexChar == '8') {
-            return 8;
-        } else if (hexChar == '9') {
-            return 9;
+        if (hexChar >= '0' && hexChar <= '9') {
+            return hexChar - '0';
         } else if (hexChar == 'A' || hexChar == 'a') {
             return 10;
         } else if (hexChar == 'B' || hexChar == 'b') {
@@ -61,17 +43,28 @@ public class BaseConverter {
         return '$'; // Invalid option. 
     }
 
+    private static String padZeros(String input, int size) {
+        while (input.length() < size) {
+            input = "0" + input;
+        }
+
+        return input;
+    }
+
     public static String intToBinary(int num) {
         if (num == 0) return "0";
 
         String output = "";
         while (num != 0) {
-            int remainder = num % 2;
-            num /= 2;
-            output = remainder + output;
+            if ((num & 0x1) == 1) {
+                output = "1" + output;
+            } else {
+                output = "0" + output;
+            }
+            num >>>= 1;
         }
 
-        return output;
+        return padZeros(output, 32);
     }
 
     public static String intToOctal(int num) {
@@ -80,11 +73,11 @@ public class BaseConverter {
         String output = "";
         while (num != 0) {
             int octalDigit = num & 7;
-            num >>= 3;
+            num >>>= 3;
             output = octalDigit + output;
         }
 
-        return output;
+        return padZeros(output, 11);
     }
 
     public static String intToHex(int num) {
@@ -94,18 +87,18 @@ public class BaseConverter {
         while (num != 0) {
             char hexDigit = intToHexDigit(num & 15);
             
-            num >>= 4;
+            num >>>= 4;
             output = hexDigit + output;
         }
 
-        return output;
+        return padZeros(output, 8);
     }
 
     public static String intToString(int num) {
         String result = "";
         while (num != 0) {
             result = (char) (num & 0xFF) + result;
-            num >>= 8;
+            num >>>= 8;
         }
 
         return result;
@@ -126,6 +119,17 @@ public class BaseConverter {
         int exponent = (num >> 23) & 0xFF;
         int sign = (num >> 31) & 0x1;
 
+        // Check for Infinity, -Infinity, NaN
+        if (exponent == 0xFF) {
+            if (mantissa != 0) {
+                return Float.NaN;
+            } else if (sign == 0 && mantissa == 0) {
+                return Float.POSITIVE_INFINITY;
+            } else if (sign == 1 && mantissa == 0) {
+                return Float.NEGATIVE_INFINITY;
+            }
+        }
+
         double result = 0;
         int nthMantissaDigit = -1;
         while (mantissa != 0) {
@@ -143,9 +147,10 @@ public class BaseConverter {
     public static int binaryToInt(String binaryNum) {
         char[] binaryNumArr = binaryNum.toCharArray();
         int result = 0;
-        for (int i = binaryNumArr.length - 1; i >= 0; i--) {
+        for (int i = 0; i < binaryNumArr.length; i++) {
+            result <<= 1;
             int bitVal = binaryNumArr[i] - '0';
-            result += bitVal * Math.pow(2, binaryNumArr.length - 1 - i);
+            result = result | bitVal;
         }
 
         return result;
@@ -179,9 +184,10 @@ public class BaseConverter {
     public static int octalToInt(String octNum) {
         char[] octNumArr = octNum.toCharArray();
         int result = 0;
-        for (int i = octNumArr.length - 1; i >= 0; i--) {
+        for (int i = 0; i < octNumArr.length; i++) {
+            result <<= 3;
             int charVal = octNumArr[i] - '0';
-            result += charVal * Math.pow(8, octNumArr.length - 1 - i);
+            result = result | charVal;
         }
         return result;
     }
@@ -214,9 +220,10 @@ public class BaseConverter {
     public static int hexToInt(String hexNum) {
         char[] hexNumArr = hexNum.toCharArray();
         int result = 0;
-        for (int i = hexNumArr.length - 1; i >= 0; i--) {
+        for (int i = 0; i < hexNumArr.length; i++) {
+            result <<= 4;
             int charVal = hexCharToInt(hexNumArr[i]);
-            result += charVal * Math.pow(16, hexNumArr.length - 1 - i);
+            result = result | charVal;
         }
 
         return result;
@@ -283,6 +290,43 @@ public class BaseConverter {
         return intToFloat(stringVal);
     }
 
+    public static int colorToInt(Color color) {
+        int alpha = color.getAlpha();
+        int red = color.getRed();
+        int green = color.getGreen();
+        int blue = color.getBlue();
+        int result = (alpha << 24) | 0;
+        result = (red << 16) | result;
+        result = (green << 8) | result;
+        result = blue | result;
+        return result;
+    }
+
+    public static String colorToBinary(Color color) {
+        int colorNum = colorToInt(color);
+        return intToBinary(colorNum);
+    }
+
+    public static String colorToOctal(Color color) {
+        int colorNum = colorToInt(color);
+        return intToOctal(colorNum);
+    }
+
+    public static String colorToHex(Color color) {
+        int colorNum = colorToInt(color);
+        return intToHex(colorNum);
+    }
+
+    public static String colorToString(Color color) {
+        int colorNum = colorToInt(color);
+        return intToString(colorNum);
+    }
+
+    public static float colorToFloat(Color color) {
+        int colorNum = colorToInt(color);
+        return intToFloat(colorNum);
+    }
+
     public static int floatToInt(float floatInput) {
         String floatBinary = floatToBinary(floatInput);
         return binaryToInt(floatBinary);
@@ -336,7 +380,15 @@ public class BaseConverter {
         }
         
         int exponent = powerCount + 127;
-        String expStr = intToBinary(exponent);
+        String expStr = "";
+        while (exponent != 0) {
+            if ((exponent & 0x1) == 1) {
+                expStr = "1" + expStr;
+            } else {
+                expStr = "0" + expStr;
+            }
+            exponent >>>= 1;
+        }
         // need to pad exponent to ensure we have 8 bits.
         while (expStr.length() < 8) {
             expStr = "0" + expStr;
@@ -409,6 +461,10 @@ public class BaseConverter {
         System.out.println(stringToColor("java"));
         System.out.println(stringToFloat("java"));
 
+        System.out.println("\nTesting color methods. Color to test = 00617661");
+        Color testColor = new Color(0x61, 0x76, 0x61);
+        System.out.println(colorToInt(testColor));
+
         System.out.println("\nTesting float methods. Float to test = 6.8141834E25");
         System.out.println(floatToInt((float) 6.8141834E25));
         System.out.println(floatToBinary((float) 6.8141834E25));
@@ -427,5 +483,13 @@ public class BaseConverter {
         System.out.println(floatToBinary(Float.POSITIVE_INFINITY));
         System.out.println(floatToBinary(Float.NEGATIVE_INFINITY));
         System.out.println(floatToBinary((float) 1E-10));
+        System.out.println(intToBinary(-1));
+
+        System.out.println(intToBinary(-1));
+        System.out.println(intToOctal(-1));
+        System.out.println(intToHex(-1));
+        System.out.println(intToString(-1));
+        System.out.println(intToColor(-1));
+        System.out.println(intToFloat(-1));
     }
 }

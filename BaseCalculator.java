@@ -4,7 +4,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
@@ -54,9 +53,17 @@ public class BaseCalculator {
         chooseColorBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Color newColor = JColorChooser.showDialog(frm, "Choose Color", Color.BLUE);
+                Color currentColor = colorText.getBackground();
+                Color newColor = JColorChooser.showDialog(frm, "Choose Color", currentColor);
                 colorText.setBackground(newColor);
-                System.out.println("choose color pressed " + newColor);
+                resetTextChangedStatus();
+                colorChanged = true;
+                decimalText.setText("" + BaseConverter.colorToInt(newColor));
+                binaryText.setText(BaseConverter.colorToBinary(newColor));
+                octalText.setText(BaseConverter.colorToOctal(newColor));
+                hexText.setText(BaseConverter.colorToHex(newColor));
+                characterText.setText(BaseConverter.colorToString(newColor));
+                floatText.setText("" + BaseConverter.colorToFloat(newColor));
             }
         });
         
@@ -103,14 +110,6 @@ public class BaseCalculator {
                     hexText.setText(BaseConverter.stringToHex(character));
                     colorText.setBackground(BaseConverter.stringToColor(character));
                     floatText.setText("" + BaseConverter.stringToFloat(character));
-                } else if (colorChanged) {
-                    Color color = colorText.getBackground();
-                    // decimalText.setText("" + BaseConverter.stringToInt(color));
-                    // binaryText.setText(BaseConverter.stringToBinary(color));
-                    // octalText.setText(BaseConverter.stringToOctal(color));
-                    // hexText.setText(BaseConverter.stringToHex(color));
-                    // colorText.setBackground(BaseConverter.stringToColor(color));
-                    // floatText.setText("" + BaseConverter.stringToFloat(color));
                 }  else if (floatChanged) {
                     Float floatVal = Float.parseFloat(floatText.getText());
                     decimalText.setText("" + BaseConverter.floatToInt(floatVal));
@@ -118,10 +117,8 @@ public class BaseCalculator {
                     octalText.setText(BaseConverter.floatToOctal(floatVal));
                     hexText.setText(BaseConverter.floatToHex(floatVal));
                     characterText.setText("" + BaseConverter.floatToString(floatVal));
-                    colorText.setBackground(BaseConverter.floatToColor(floatVal));
-                    
+                    colorText.setBackground(BaseConverter.floatToColor(floatVal)); 
                 }
-
             }
         });
 
@@ -143,7 +140,6 @@ public class BaseCalculator {
 
         decimalText.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                System.out.println("decimal changed");
                 resetTextChangedStatus();
                 decimalChanged = true;
             }
@@ -151,7 +147,6 @@ public class BaseCalculator {
 
         binaryText.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                System.out.println("binary changed");
                 resetTextChangedStatus();
                 binaryChanged = true;
             }
@@ -159,7 +154,6 @@ public class BaseCalculator {
 
         octalText.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                System.out.println("octal changed");
                 resetTextChangedStatus();
                 octalChanged = true;
             }
@@ -167,7 +161,6 @@ public class BaseCalculator {
 
         hexText.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                System.out.println("hex changed");
                 resetTextChangedStatus();
                 hexChanged = true;
             }
@@ -175,7 +168,6 @@ public class BaseCalculator {
 
         characterText.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                System.out.println("character changed");
                 resetTextChangedStatus();
                 characterChanged = true;
             }
@@ -183,7 +175,6 @@ public class BaseCalculator {
 
         floatText.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                System.out.println("float changed");
                 resetTextChangedStatus();
                 floatChanged = true;
             }
